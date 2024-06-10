@@ -1,0 +1,43 @@
+networks:
+  cassandra-net:
+    driver: bridge
+services:
+  cas1:
+    image: cassandra:latest
+    container_name: cas1
+    hostname: cas1
+    networks:
+      - cassandra-net
+    ports:
+      - "127.0.0.1:9042:9042"
+    environment:
+      CASSANDRA_SEEDS: "cas1"
+      CASSANDRA_DC: DC1
+      CASSANDRA_RACK: RACK1
+
+  cas2:
+    image: cassandra:latest
+    container_name: cas2
+    hostname: cas2
+    networks:
+      - cassandra-net
+    ports:
+      - "127.0.0.2:9043:9042"
+    environment:
+      CASSANDRA_SEEDS: "cas1"
+    depends_on:
+      cas1:
+        condition: service_started
+  cas3:
+    image: cassandra:latest
+    container_name: cas3
+    hostname: cas3
+    networks:
+      - cassandra-net
+    ports:
+      - "127.0.0.3:9044:9042"
+    environment:
+      CASSANDRA_SEEDS: "cas1"
+    depends_on:
+      cas2:
+        condition: service_started
